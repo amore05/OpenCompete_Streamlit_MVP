@@ -6,12 +6,12 @@ import plotly.express as px
 import streamlit as st
 from data_fetch import fetch_food_cpi
 
-st.set_page_config(page_title="OpenCompete - KSA Food & Retail", page_icon="???", layout="wide")
+st.set_page_config(page_title="OpenCompete - KSA Food & Retail", page_icon="ğŸ½ï¸", layout="wide")
 
-# --- i18n (ÈÏæä ÔÑØÇÊ ØæíáÉ Ãæ ÚáÇãÇÊ ÇŞÊÈÇÓ ĞßíÉ) ---
+# --- i18n (Ø¨Ø¯ÙˆÙ† Ø´Ø±Ø·Ø§Øª Ø·ÙˆÙŠÙ„Ø© Ø£Ùˆ Ø¹Ù„Ø§Ù…Ø§Øª Ø§Ù‚ØªØ¨Ø§Ø³ Ø°ÙƒÙŠØ©) ---
 T = {
     "en": {
-        "app": "??? OpenCompete - KSA Food & Retail Competition Dashboard (MVP)",
+        "app": "ğŸ½ï¸ OpenCompete - KSA Food & Retail Competition Dashboard (MVP)",
         "data_controls": "Data Controls",
         "auto_load": "This MVP auto-loads Saudi Food CPI & General CPI.",
         "yoy": "YoY threshold (%)",
@@ -31,30 +31,30 @@ T = {
         "series_gen": "General CPI",
         "lang_label": "Language",
         "lang_en": "English",
-        "lang_ar": "ÇáÚÑÈíÉ",
+        "lang_ar": "Ø§Ù„Ø¹Ø±Ø¨ÙŠØ©",
     },
     "ar": {
-        "app": "??? OpenCompete - áæÍÉ ãÄÔÑÇÊ ÇáãäÇİÓÉ áŞØÇÚ ÇáÃÛĞíÉ æÇáÊÌÒÆÉ (äãæĞÌ Ãæáí)",
-        "data_controls": "ÇáÊÍßã ÈÇáÈíÇäÇÊ",
-        "auto_load": "åĞÇ ÇáäãæĞÌ íÌáÈ ÊáŞÇÆíÇ ãÄÔÑ ÃÓÚÇÑ ÇáÛĞÇÁ æÇáÑŞã ÇáŞíÇÓí ÇáÚÇã İí ÇáÓÚæÏíÉ.",
-        "yoy": "ÍÏ ÇáÊÛíÑ ÇáÓäæí (%)",
-        "mom": "ÍÏ ÇáÊÛíÑ ÇáÔåÑí (%)",
-        "alert_note": "íÊã ÅØáÇŞ ÇáÊäÈíå ÚäÏãÇ íÊÌÇæÒ ÇáÊÛíÑ ÇáÓäæí æÇáÔåÑí ÇáÍÏíä ãÚÇ.",
-        "kpi_food": "ÃÍÏË ŞíãÉ áãÄÔÑ ÃÓÚÇÑ ÇáÛĞÇÁ",
-        "kpi_yoy": "ÊÛíÑ Óäæí áãÄÔÑ ÃÓÚÇÑ ÇáÛĞÇÁ (%)",
-        "kpi_mom": "ÊÛíÑ ÔåÑí áãÄÔÑ ÃÓÚÇÑ ÇáÛĞÇÁ (%)",
-        "tab_trend": "ÇáÇÊÌÇå",
-        "tab_changes": "ÇáÊÛíÑÇÊ",
-        "tab_alerts": "ÇáÊäÈíåÇÊ",
-        "trend_title": "ÇÊÌÇå ÇáãÄÔÑ (ÇáÛĞÇÁ ãŞÇÈá ÇáÚÇã)",
-        "changes_title": "ãÄÔÑ ÇáÛĞÇÁ - ÇáÊÛíÑ ÇáÓäæí æÇáÔåÑí",
-        "alert_table_note": "ÇáÕİæİ ÇáãÚáøãÉ ÚäÏãÇ íÊÌÇæÒ ÇáÓäæí æÇáÔåÑí ÇáÍÏíä:",
-        "caption": "ÇáãÕÏÑ: FAOSTAT/HDX (ÇáÓÚæÏíÉ)¡ GASTAT (ááÓíÇŞ). äãæĞÌ ááåÇßËæä.",
-        "series_food": "ãÄÔÑ ÃÓÚÇÑ ÇáÛĞÇÁ",
-        "series_gen": "ÇáÑŞã ÇáŞíÇÓí ÇáÚÇã",
-        "lang_label": "ÇááÛÉ",
+        "app": "ğŸ½ï¸ OpenCompete - Ù„ÙˆØ­Ø© Ù…Ø¤Ø´Ø±Ø§Øª Ø§Ù„Ù…Ù†Ø§ÙØ³Ø© Ù„Ù‚Ø·Ø§Ø¹ Ø§Ù„Ø£ØºØ°ÙŠØ© ÙˆØ§Ù„ØªØ¬Ø²Ø¦Ø© (Ù†Ù…ÙˆØ°Ø¬ Ø£ÙˆÙ„ÙŠ)",
+        "data_controls": "Ø§Ù„ØªØ­ÙƒÙ… Ø¨Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª",
+        "auto_load": "Ù‡Ø°Ø§ Ø§Ù„Ù†Ù…ÙˆØ°Ø¬ ÙŠØ¬Ù„Ø¨ ØªÙ„Ù‚Ø§Ø¦ÙŠØ§ Ù…Ø¤Ø´Ø± Ø£Ø³Ø¹Ø§Ø± Ø§Ù„ØºØ°Ø§Ø¡ ÙˆØ§Ù„Ø±Ù‚Ù… Ø§Ù„Ù‚ÙŠØ§Ø³ÙŠ Ø§Ù„Ø¹Ø§Ù… ÙÙŠ Ø§Ù„Ø³Ø¹ÙˆØ¯ÙŠØ©.",
+        "yoy": "Ø­Ø¯ Ø§Ù„ØªØºÙŠØ± Ø§Ù„Ø³Ù†ÙˆÙŠ (%)",
+        "mom": "Ø­Ø¯ Ø§Ù„ØªØºÙŠØ± Ø§Ù„Ø´Ù‡Ø±ÙŠ (%)",
+        "alert_note": "ÙŠØªÙ… Ø¥Ø·Ù„Ø§Ù‚ Ø§Ù„ØªÙ†Ø¨ÙŠÙ‡ Ø¹Ù†Ø¯Ù…Ø§ ÙŠØªØ¬Ø§ÙˆØ² Ø§Ù„ØªØºÙŠØ± Ø§Ù„Ø³Ù†ÙˆÙŠ ÙˆØ§Ù„Ø´Ù‡Ø±ÙŠ Ø§Ù„Ø­Ø¯ÙŠÙ† Ù…Ø¹Ø§.",
+        "kpi_food": "Ø£Ø­Ø¯Ø« Ù‚ÙŠÙ…Ø© Ù„Ù…Ø¤Ø´Ø± Ø£Ø³Ø¹Ø§Ø± Ø§Ù„ØºØ°Ø§Ø¡",
+        "kpi_yoy": "ØªØºÙŠØ± Ø³Ù†ÙˆÙŠ Ù„Ù…Ø¤Ø´Ø± Ø£Ø³Ø¹Ø§Ø± Ø§Ù„ØºØ°Ø§Ø¡ (%)",
+        "kpi_mom": "ØªØºÙŠØ± Ø´Ù‡Ø±ÙŠ Ù„Ù…Ø¤Ø´Ø± Ø£Ø³Ø¹Ø§Ø± Ø§Ù„ØºØ°Ø§Ø¡ (%)",
+        "tab_trend": "Ø§Ù„Ø§ØªØ¬Ø§Ù‡",
+        "tab_changes": "Ø§Ù„ØªØºÙŠØ±Ø§Øª",
+        "tab_alerts": "Ø§Ù„ØªÙ†Ø¨ÙŠÙ‡Ø§Øª",
+        "trend_title": "Ø§ØªØ¬Ø§Ù‡ Ø§Ù„Ù…Ø¤Ø´Ø± (Ø§Ù„ØºØ°Ø§Ø¡ Ù…Ù‚Ø§Ø¨Ù„ Ø§Ù„Ø¹Ø§Ù…)",
+        "changes_title": "Ù…Ø¤Ø´Ø± Ø§Ù„ØºØ°Ø§Ø¡ - Ø§Ù„ØªØºÙŠØ± Ø§Ù„Ø³Ù†ÙˆÙŠ ÙˆØ§Ù„Ø´Ù‡Ø±ÙŠ",
+        "alert_table_note": "Ø§Ù„ØµÙÙˆÙ Ø§Ù„Ù…Ø¹Ù„Ù‘Ù…Ø© Ø¹Ù†Ø¯Ù…Ø§ ÙŠØªØ¬Ø§ÙˆØ² Ø§Ù„Ø³Ù†ÙˆÙŠ ÙˆØ§Ù„Ø´Ù‡Ø±ÙŠ Ø§Ù„Ø­Ø¯ÙŠÙ†:",
+        "caption": "Ø§Ù„Ù…ØµØ¯Ø±: FAOSTAT/HDX (Ø§Ù„Ø³Ø¹ÙˆØ¯ÙŠØ©)ØŒ GASTAT (Ù„Ù„Ø³ÙŠØ§Ù‚). Ù†Ù…ÙˆØ°Ø¬ Ù„Ù„Ù‡Ø§ÙƒØ«ÙˆÙ†.",
+        "series_food": "Ù…Ø¤Ø´Ø± Ø£Ø³Ø¹Ø§Ø± Ø§Ù„ØºØ°Ø§Ø¡",
+        "series_gen": "Ø§Ù„Ø±Ù‚Ù… Ø§Ù„Ù‚ÙŠØ§Ø³ÙŠ Ø§Ù„Ø¹Ø§Ù…",
+        "lang_label": "Ø§Ù„Ù„ØºØ©",
         "lang_en": "English",
-        "lang_ar": "ÇáÚÑÈíÉ",
+        "lang_ar": "Ø§Ù„Ø¹Ø±Ø¨ÙŠØ©",
     },
 }
 
@@ -67,12 +67,12 @@ with st.sidebar:
     st.selectbox(
         tr("lang_label"),
         options=["ar","en"],
-        format_func=lambda x: "ÇáÚÑÈíÉ" if x=="ar" else "English",
+        format_func=lambda x: "Ø§Ù„Ø¹Ø±Ø¨ÙŠØ©" if x=="ar" else "English",
         key="lang",
         index=0
     )
 
-# RTL ááæÇÌåÉ ÇáÚÑÈíÉ
+# RTL Ù„Ù„ÙˆØ§Ø¬Ù‡Ø© Ø§Ù„Ø¹Ø±Ø¨ÙŠØ©
 if st.session_state.get("lang","ar") == "ar":
     st.markdown("""
     <style>
@@ -141,11 +141,11 @@ with tab3:
     st.write(tr("alert_table_note"))
     shown = alerts.loc[alerts["Alert"], ["Date","Food CPI","Food CPI YoY %","Food CPI MoM %","Heat"]].round(2)
     shown = shown.rename(columns={
-        "Date": "ÇáÊÇÑíÎ" if st.session_state["lang"]=="ar" else "Date",
+        "Date": "Ø§Ù„ØªØ§Ø±ÙŠØ®" if st.session_state["lang"]=="ar" else "Date",
         "Food CPI": food_label,
-        "Food CPI YoY %": "ÊÛíÑ Óäæí %" if st.session_state["lang"]=="ar" else "YoY %",
-        "Food CPI MoM %": "ÊÛíÑ ÔåÑí %" if st.session_state["lang"]=="ar" else "MoM %",
-        "Heat": "ÇáÍÑÇÑÉ" if st.session_state["lang"]=="ar" else "Heat"
+        "Food CPI YoY %": "ØªØºÙŠØ± Ø³Ù†ÙˆÙŠ %" if st.session_state["lang"]=="ar" else "YoY %",
+        "Food CPI MoM %": "ØªØºÙŠØ± Ø´Ù‡Ø±ÙŠ %" if st.session_state["lang"]=="ar" else "MoM %",
+        "Heat": "Ø§Ù„Ø­Ø±Ø§Ø±Ø©" if st.session_state["lang"]=="ar" else "Heat"
     })
     st.dataframe(shown)
 
