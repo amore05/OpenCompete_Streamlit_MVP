@@ -6,69 +6,156 @@ import streamlit as st
 
 from data_fetch import fetch_food_cpi
 
-st.set_page_config(page_title="OpenCompete ‚Äì KSA Food & Retail", page_icon="üçΩÔ∏è", layout="wide")
+st.set_page_config(page_title="OpenCompete ñ KSA Food & Retail", page_icon="???", layout="wide")
 
-st.title("üçΩÔ∏è OpenCompete ‚Äì KSA Food & Retail Competition Dashboard (MVP)")
+# ---------- i18n ----------
+T = {
+    "en": {
+        "app": "??? OpenCompete ñ KSA Food & Retail Competition Dashboard (MVP)",
+        "data_controls": "Data Controls",
+        "auto_load": "This MVP auto-loads Saudi Food CPI & General CPI.",
+        "yoy": "YoY threshold (%)",
+        "mom": "MoM threshold (%)",
+        "alert_note": "Alerts trigger when both YoY and MoM exceed thresholds.",
+        "kpi_food": "Food CPI (latest)",
+        "kpi_yoy": "Food CPI YoY %",
+        "kpi_mom": "Food CPI MoM %",
+        "tab_trend": "Trend",
+        "tab_changes": "Changes",
+        "tab_alerts": "Alerts",
+        "trend_title": "CPI Trend (Food vs General)",
+        "changes_title": "Food CPI ñ YoY and MoM Changes",
+        "alert_table_note": "Rows flagged where both YoY and MoM exceed thresholds:",
+        "caption": "Data: FAOSTAT/HDX (Saudi), GASTAT (context). MVP for hackathon use.",
+        "series_food": "Food CPI",
+        "series_gen": "General CPI",
+        "lang_label": "Language",
+        "lang_en": "English",
+        "lang_ar": "«·⁄—»Ì…",
+    },
+    "ar": {
+        "app": "??? OpenCompete ñ ·ÊÕ… „ƒ‘—«  «·„‰«›”… ·ﬁÿ«⁄ «·√€–Ì… Ê«· Ã“∆… (‰„Ê–Ã √Ê·Ì)",
+        "data_controls": "«· Õﬂ„ »«·»Ì«‰« ",
+        "auto_load": "Â–« «·‰„Ê–Ã ÌÃ·»  ·ﬁ«∆Ì« „ƒ‘— √”⁄«— «·€–«¡ Ê«·—ﬁ„ «·ﬁÌ«”Ì «·⁄«„ ›Ì «·”⁄ÊœÌ….",
+        "yoy": "Õœ «· €Ì— «·”‰ÊÌ (%)",
+        "mom": "Õœ «· €Ì— «·‘Â—Ì (%)",
+        "alert_note": "Ì „ ≈ÿ·«ﬁ «· ‰»ÌÂ ⁄‰œ„« Ì Ã«Ê“ «· €Ì— «·”‰ÊÌ Ê«·‘Â—Ì «·Õœ¯Ì‰ „⁄«.",
+        "kpi_food": "√ÕœÀ ﬁÌ„… ·„ƒ‘— √”⁄«— «·€–«¡",
+        "kpi_yoy": " €Ì— ”‰ÊÌ ·„ƒ‘— √”⁄«— «·€–«¡ (%)",
+        "kpi_mom": " €Ì— ‘Â—Ì ·„ƒ‘— √”⁄«— «·€–«¡ (%)",
+        "tab_trend": "«·« Ã«Â",
+        "tab_changes": "«· €Ì—« ",
+        "tab_alerts": "«· ‰»ÌÂ« ",
+        "trend_title": "« Ã«Â «·„ƒ‘— («·€–«¡ „ﬁ«»· «·⁄«„)",
+        "changes_title": "„ƒ‘— «·€–«¡ ñ «· €Ì— «·”‰ÊÌ Ê«·‘Â—Ì",
+        "alert_table_note": "«·’›Ê› «·„⁄·¯Û„… ⁄‰œ„« Ì Ã«Ê“ «·”‰ÊÌ Ê«·‘Â—Ì «·Õœ¯Ì‰:",
+        "caption": "«·„’œ—: FAOSTAT/HDX («·”⁄ÊœÌ…)° GASTAT (··”Ì«ﬁ). ‰„Ê–Ã ··Â«ﬂÀÊ‰.",
+        "series_food": "„ƒ‘— √”⁄«— «·€–«¡",
+        "series_gen": "«·—ﬁ„ «·ﬁÌ«”Ì «·⁄«„",
+        "lang_label": "«··€…",
+        "lang_en": "English",
+        "lang_ar": "«·⁄—»Ì…",
+    },
+}
+
+def tr(key):
+    lang = st.session_state.get("lang", "ar")
+    return T[lang][key]
+
+# ---------- Sidebar: language & thresholds ----------
+with st.sidebar:
+    st.selectbox(
+        tr("lang_label"),
+        options=["ar","en"],
+        format_func=lambda x: "«·⁄—»Ì…" if x=="ar" else "English",
+        key="lang",
+        index=0
+    )
+
+# Inject RTL when Arabic
+if st.session_state.get("lang","ar") == "ar":
+    st.markdown("""
+    <style>
+      html, body, [class*="css"]  { direction: rtl; text-align: right; }
+    </style>
+    """, unsafe_allow_html=True)
 
 with st.sidebar:
-    st.header("Data Controls")
-    st.write("This MVP auto-loads Saudi **Food CPI** & **General CPI**.")
-    thresh_yoy = st.slider("YoY threshold (%)", 0.0, 10.0, 3.0, 0.1)
-    thresh_mom = st.slider("MoM threshold (%)", 0.0, 5.0, 0.6, 0.1)
-    st.caption("Alerts trigger when both YoY and MoM exceed thresholds.")
+    st.header(tr("data_controls"))
+    st.write(tr("auto_load"))
+    yoy = st.slider(tr("yoy"), 0.0, 10.0, 3.0, 0.1)
+    mom = st.slider(tr("mom"), 0.0, 5.0, 0.6, 0.1)
+    st.caption(tr("alert_note"))
 
-# Load data (fetch or fallback to cache)
+st.title(tr("app"))
+
+# ---------- Data ----------
 cache_csv = os.path.join("data", "sample_food_cpi_sa.csv")
 df = fetch_food_cpi(cache_csv)
 
-# Ensure expected columns
 if "Date" not in df.columns:
     st.error("Data missing Date column; please update data source.")
     st.stop()
 
-# Pivot to have separate series for Food CPI and General CPI
 pivot = df.pivot_table(index="Date", columns="Indicator", values="Value").reset_index()
 for col in ["Food CPI", "General CPI"]:
     if col not in pivot.columns:
         pivot[col] = np.nan
 pivot = pivot.sort_values("Date")
 
-# Compute changes
 for col in ["Food CPI", "General CPI"]:
     pivot[f"{col} MoM %"] = pivot[col].pct_change() * 100
     pivot[f"{col} YoY %"] = pivot[col].pct_change(12) * 100
 
-# Alert logic
 alerts = pivot.assign(
     Heat=(
         (pivot["Food CPI YoY %"] - pivot["Food CPI YoY %"].mean()) / (pivot["Food CPI YoY %"].std() + 1e-6) * 0.6
         + (pivot["Food CPI MoM %"] - pivot["Food CPI MoM %"].mean()) / (pivot["Food CPI MoM %"].std() + 1e-6) * 0.4
     ),
-    Alert=lambda d: (d["Food CPI YoY %"] > thresh_yoy) & (d["Food CPI MoM %"] > thresh_mom)
+    Alert=lambda d: (d["Food CPI YoY %"] > yoy) & (d["Food CPI MoM %"] > mom)
 )
 
-# KPI cards
 latest = pivot.iloc[-1:].copy()
-col1, col2, col3 = st.columns(3)
-col1.metric("Food CPI (latest)", f"{latest['Food CPI'].values[0]:.1f}")
-col2.metric("Food CPI YoY %", f"{latest['Food CPI YoY %'].values[0]:.2f}")
-col3.metric("Food CPI MoM %", f"{latest['Food CPI MoM %'].values[0]:.2f}")
+c1, c2, c3 = st.columns(3)
+c1.metric(tr("kpi_food"), f"{latest['Food CPI'].values[0]:.1f}")
+c2.metric(tr("kpi_yoy"), f"{latest['Food CPI YoY %'].values[0]:.2f}")
+c3.metric(tr("kpi_mom"), f"{latest['Food CPI MoM %'].values[0]:.2f}")
 
-# Charts
-tab1, tab2, tab3 = st.tabs(["Trend", "Changes", "Alerts"])
+# ---------- Tabs ----------
+tab1, tab2, tab3 = st.tabs([tr("tab_trend"), tr("tab_changes"), tr("tab_alerts")])
+
+food_label = tr("series_food")
+gen_label  = tr("series_gen")
 
 with tab1:
-    fig = px.line(pivot, x="Date", y=["Food CPI","General CPI"], markers=True, title="CPI Trend (Food vs General)")
+    # Rename series for localized legend
+    plot_df = pivot.rename(columns={
+        "Food CPI": food_label,
+        "General CPI": gen_label
+    })
+    fig = px.line(plot_df, x="Date", y=[food_label, gen_label], markers=True, title=tr("trend_title"))
     st.plotly_chart(fig, use_container_width=True)
 
 with tab2:
-    fig2 = px.bar(pivot.tail(24), x="Date", y=["Food CPI YoY %","Food CPI MoM %"], barmode="group",
-                  title="Food CPI ‚Äì YoY and MoM Changes")
+    ch_df = pivot.tail(24).rename(columns={
+        "Food CPI YoY %": "YoY %",
+        "Food CPI MoM %": "MoM %"
+    })
+    fig2 = px.bar(ch_df, x="Date", y=["YoY %","MoM %"], barmode="group", title=tr("changes_title"))
     st.plotly_chart(fig2, use_container_width=True)
 
 with tab3:
-    st.write("Rows flagged where **both** YoY and MoM exceed thresholds:")
-    st.dataframe(alerts.loc[alerts["Alert"], ["Date","Food CPI","Food CPI YoY %","Food CPI MoM %","Heat"]].round(2))
+    st.write(tr("alert_table_note"))
+    st.dataframe(
+        alerts.loc[alerts["Alert"], ["Date","Food CPI","Food CPI YoY %","Food CPI MoM %","Heat"]].round(2)
+        .rename(columns={
+            "Date": "«· «—ÌŒ" if st.session_state["lang"]=="ar" else "Date",
+            "Food CPI": food_label,
+            "Food CPI YoY %": " €Ì— ”‰ÊÌ %" if st.session_state["lang"]=="ar" else "YoY %",
+            "Food CPI MoM %": " €Ì— ‘Â—Ì %" if st.session_state["lang"]=="ar" else "MoM %",
+            "Heat": "«·Õ—«—…" if st.session_state["lang"]=="ar" else "Heat"
+        })
+    )
 
 st.divider()
-st.caption("Data: FAOSTAT/HDX (Saudi), GASTAT (context). MVP for hackathon use.")
+st.caption(tr("caption"))
